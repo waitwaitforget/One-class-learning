@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 import argparse
+import torch
 
 from sklearn import svm
 from sklearn.datasets import load_digits
@@ -56,6 +57,35 @@ class DsInfo(object):
 		self.ndim = ndim
 		self.nclass = nclass
 		self.dataset  = dataset
+
+
+def pairwise_distance(X, Y, type, params):
+	if type == 'linear':
+		K = torch.mm(X.transpose(1,0), Y)
+
+	elif type == 'poly':
+		order = params['order']
+		bias = params['bias']
+		K = torch.pow(torch.mm(X.transpose(1, 0), Y) + bias, order)
+
+	elif type == 'gauss':
+		sigma = params['sigma']
+
+		n = X.size(0)
+		m = Y.size(0)
+
+		norm1 = torch.sum(torch.pow(X, 2), 1)
+		norm2 = torch.sum(torch.pow(Y, 2), 1)
+
+		mat1 = norm1.unsqueeze(1).repeat(1, m)
+		mat2 = norm2.unsqueeze(0).repeat(n, 1)
+
+		K = mat1 + mat2 - 2 * torch.mm(X, Y.transpose(1, 0))
+		K = torch.exp(-K / (2*sigma**2))
+	else:
+		raise NotImplementedError
+
+	return K
 
 
 # basic configuration
