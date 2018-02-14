@@ -12,4 +12,4 @@ python train_fcebm.py -c 1 -e 100
 python kernelPCA
 ```
 Example
-![alt text](https://github.com/waitwaitforget/One-class-learning/imgs/kpca.png)
+![alt text](https://github.com/waitwaitforget/One-class-learning/tree/master/imgs/kpca.png)
